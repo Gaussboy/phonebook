@@ -31,19 +31,20 @@ class PhoneBookTests {
     @Test
     fun deletePhoneTest() {
         val book = PhoneBook()
+        book.addNewName("Ступин Алексей Глебович", "+79992410359")
+        assertEquals("Ступин Алексей Глебович - [+79992410359]\n", book.toString())
         book.deletePhone("Ступин Алексей Глебович", "+79992410359")
-        assertEquals("", book.toString())
+        assertEquals("Ступин Алексей Глебович - []\n", book.toString())
     }
     @Test
     fun searchByNameTest() {
         val book = PhoneBook()
-        book.searchByName("Ступин Алексей Глебович")
-        assertEquals("", book.toString())
+        assertEquals(setOf<String>(), book.searchByName("Ступин Алексей Глебович"))
     }
     @Test
     fun searchByPhoneTest() {
         val book = PhoneBook()
-        book.searchByPhone("+79992410359")
-        assertEquals("", book.toString())
+        assertEquals("Пользователя с таким номером не существует.",
+            book.searchByPhone("+79992410359"))
     }
 }
