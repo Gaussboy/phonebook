@@ -34,7 +34,7 @@ class PhoneBook() {
         if (name in names)
             phones[names.indexOf(name)].add(phone)
         else
-            addNewPhone(name, phone)
+            addNewName(name, phone)
     }
 
 
