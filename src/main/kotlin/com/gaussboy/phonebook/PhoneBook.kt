@@ -12,27 +12,23 @@ import java.lang.StringBuilder
  * Телефон задаётся последовательностью символов из цифр, +, *, #, -.
  * */
 
-class PhoneBook() {
-
-    val phones = mutableListOf<MutableSet<String>>()
-    val names = mutableListOf<String>()
+class PhoneBook {
+    private val namesPhones = mutableMapOf<String, MutableSet<String>>()
 
     fun addNewName(name: String) {
         if (!Regex("""([А-Яа-яA-Za-zЁё]+( )?)+""").matches(name)) throw IllegalArgumentException()
-        names.add(name)
-        phones.add(mutableSetOf())
+        namesPhones[name] = mutableSetOf()
     }
 
     fun addNewName(name: String, phone: String) {
         if (!Regex("""([0-9]|[-+*#])+""").matches(phone)) throw IllegalArgumentException()
-        addNewName(name)
-        phones[names.indexOf(name)].add(phone)
+        namesPhones[name] = mutableSetOf(phone)
     }
 
     fun addNewPhone(name: String, phone: String) {
         if (!Regex("""([0-9]|[-+*#])+""").matches(phone)) throw IllegalArgumentException()
-        if (name in names)
-            phones[names.indexOf(name)].add(phone)
+        if (name in namesPhones)
+            namesPhones + (name to phone)
         else
             addNewName(name, phone)
     }
@@ -40,41 +36,38 @@ class PhoneBook() {
 
     fun deleteName(name: String) {
         if (!Regex("""([А-Яа-яA-Za-zЁё]+( )?)+""").matches(name)) throw IllegalArgumentException()
-        if (name in names) {
-            phones.removeAt(names.indexOf(name))
-            names.removeAt(names.indexOf(name))
+        if (name in namesPhones)
+            namesPhones.remove(name)
+            namesPhones - name
         }
-
-    }
 
     fun deletePhone(name: String, phone: String) {
         if (!Regex("""([А-Яа-яA-Za-zЁё]+( )?)+""").matches(name)) throw IllegalArgumentException()
         if (!Regex("""([0-9]|[-+*#])+""").matches(phone)) throw IllegalArgumentException()
-        if (name in names) {
-            if (phone in phones[names.indexOf(name)])
-                phones[names.indexOf(name)].remove(phone)
-            else println("У данного пользователя нет такого телефона.")
+        if (mutableSetOf(phone) == namesPhones[name]) {
+                namesPhones[name] = mutableSetOf()
+            } else println("У данного пользователя нет такого телефона.")
+        if (name !in namesPhones) println("Нет такого пользователя.")
         }
-        else println("Нет такого пользователя.")
-    }
 
     fun searchByPhone(phone: String): String {
-        for (i in phones) {
-            if (phone in i) return names[phones.indexOf(i)]
+        for ((i)  in namesPhones) {
+        if (namesPhones.keys == mutableSetOf(phone)) return i
         }
         return "Пользователя с таким номером не существует."
     }
 
     //Если пользователя не существует, возвращается пустой лист
-    fun searchByName(name: String): Set<String> {
-        if (name in names) return phones[names.indexOf(name)]
-        return setOf()
+    fun searchByName(name: String): MutableSet<String> {
+        if (name in namesPhones) return namesPhones.keys
+        return mutableSetOf()
     }
 
     override fun toString(): String {
         val bldr = StringBuilder()
-        for (i in names)
-            bldr.append(i).append(" - ").append(phones[names.indexOf(i)]).append("\n")
+        for ((i) in namesPhones)
+            bldr.append(i).append(" - ").append(namesPhones.values).append("\n")
         return bldr.toString()
     }
 }
+
